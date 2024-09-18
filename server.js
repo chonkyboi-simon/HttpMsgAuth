@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const app = express();
 app.use(express.json());
@@ -6,7 +7,8 @@ app.use(express.json());
 const SERVER_PORT=3001;
 const CSYSTEM_PAYLOAD_SECRET_KEY='abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789';
 const PAYLOAD_MAC_VERIFY_ENFORCING='false';
-
+const JWT_SECRET='m82RkFf8MhmbqVSi18mYpvgMMMfIJk5ec0HCvU9XVtk=';
+const JWT_EXPIRY='10m';
 app.post('/perform-authorized-action',endpoint_perform_authorized_action);
 
 app.listen(SERVER_PORT, () => {

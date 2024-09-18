@@ -9,13 +9,33 @@ function get_token_from_credit_service($host_url, $dataToSign, $hmacKey)
 {
     $url = $host_url . '/perform-authorized-action';
 	
-	// Encode the body data to JSON
-    $bodyData = json_encode(array(
+	// construct bodyData
+    $bodyData = array(
         'dataToSign' => $dataToSign,
-    ));
+    );
+
+    // //verification purpose START
+    //     $bodyData1 = json_encode(array(
+    //         'dataToSign' => $dataToSign,
+    //     ));
+    //     echo "<P>bodyData1 (encoded):</P>";
+    //     echo "<P>" . $bodyData1 . "</P>";
+
+    //     $body = json_encode(array(
+    //         'dataToSign'    => $bodyData1,
+    //     ));
+    //     echo "<P>body (encapsulated and encoded again):</P>";
+    //     echo "<P>" . $body . "</P>";
+    // //verification purpose END
+
+    echo "<P>Http body data (encoded):</P>";
+    echo "<P>" . json_encode($bodyData) . "</P>";
 
 	// Generate the HMAC using sha256 and the provided HMAC key
-    $hmacSignature = base64_encode(hash_hmac('sha256', $bodyData, $hmacKey, true));
+    $hmacSignature = base64_encode(hash_hmac('sha256', json_encode($bodyData), $hmacKey, true));
+
+    echo "<P>HTTP body data signature in BASE64: </P>";
+    echo "<P>" . $hmacSignature . "</P>";
 
     // Set up the headers and body for wp_remote_request
     $args = array(
@@ -24,9 +44,7 @@ function get_token_from_credit_service($host_url, $dataToSign, $hmacKey)
             'Content-Type' => 'application/json',
 			'x-csystem-signature' => $hmacSignature, // Add the HMAC signature to the headers
         ),
-        'body'    => json_encode(array(
-            'dataToSign'    => $bodyData,
-        )),
+        'body'    => json_encode($bodyData)
     );
 
     // Log the arguments
